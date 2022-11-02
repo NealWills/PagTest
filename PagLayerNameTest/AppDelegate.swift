@@ -25,7 +25,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
         
-        let fileName = "\(NSDate.init().timeIntervalSince1970)"
+        let fileName = String.init(format: "%.0f", NSDate.init().timeIntervalSince1970)
         let filePath = AppDelegate.rootDirPath() + "\(fileName)"
         do {
             try FileManager.default.copyItem(at: url, to: URL.init(fileURLWithPath: filePath))
@@ -49,7 +49,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     class func rootDirPath() -> String {
         let rootDir = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last ?? ""
-        return "\(rootDir)" + "/PAGFile"
+        let path = "\(rootDir)" + "/PAGFile"
+        do {
+            try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true)
+        } catch let error {
+            print(error)
+        }
+        return "\(rootDir)" + "/PAGFile/"
     }
 
 }
