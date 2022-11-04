@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		080DC3C62914FF0500F761BD /* EditTextPop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080DC3C52914FF0500F761BD /* EditTextPop.swift */; };
 		0836ADA7291224AB002AEBDA /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0836ADA6291224AB002AEBDA /* AppDelegate.swift */; };
 		0836ADAB291224AB002AEBDA /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0836ADAA291224AB002AEBDA /* ViewController.swift */; };
 		0836ADAE291224AB002AEBDA /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0836ADAC291224AB002AEBDA /* Main.storyboard */; };
@@ -22,6 +23,7 @@
 		0836ADE629124D4A002AEBDA /* pet_normalLevelUpThan_animate in Resources */ = {isa = PBXBuildFile; fileRef = 0836ADE229124D4A002AEBDA /* pet_normalLevelUpThan_animate */; };
 		0836ADEA29124D8C002AEBDA /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0836ADE829124D8C002AEBDA /* PreviewViewController.swift */; };
 		0836ADF1291254D5002AEBDA /* pet_levelUpThan_animate in Resources */ = {isa = PBXBuildFile; fileRef = 0836ADF0291254D5002AEBDA /* pet_levelUpThan_animate */; };
+		0836ADF3291280F9002AEBDA /* PreviewDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0836ADF2291280F9002AEBDA /* PreviewDetailViewController.swift */; };
 		5698D4413ABE595C57561908 /* Pods_PagLayerNameTestTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 097C1ADCC0248082B4E2AECA /* Pods_PagLayerNameTestTests.framework */; };
 		5DCDC363708B4030DED7CDA1 /* Pods_PagLayerNameTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0214E25DD259D084B470A058 /* Pods_PagLayerNameTest.framework */; };
 		CB41B3F3CE03CEB4CC10F648 /* Pods_PagLayerNameTest_PagLayerNameTestUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0EAFDDE557EF866D574E669 /* Pods_PagLayerNameTest_PagLayerNameTestUITests.framework */; };
@@ -46,6 +48,7 @@
 
 /* Begin PBXFileReference section */
 		0214E25DD259D084B470A058 /* Pods_PagLayerNameTest.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PagLayerNameTest.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		080DC3C52914FF0500F761BD /* EditTextPop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditTextPop.swift; sourceTree = "<group>"; };
 		0836ADA3291224AB002AEBDA /* PagLayerNameTest.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PagLayerNameTest.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0836ADA6291224AB002AEBDA /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		0836ADAA291224AB002AEBDA /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -66,6 +69,7 @@
 		0836ADE229124D4A002AEBDA /* pet_normalLevelUpThan_animate */ = {isa = PBXFileReference; lastKnownFileType = file; path = pet_normalLevelUpThan_animate; sourceTree = "<group>"; };
 		0836ADE829124D8C002AEBDA /* PreviewViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewViewController.swift; sourceTree = "<group>"; };
 		0836ADF0291254D5002AEBDA /* pet_levelUpThan_animate */ = {isa = PBXFileReference; lastKnownFileType = file; path = pet_levelUpThan_animate; sourceTree = "<group>"; };
+		0836ADF2291280F9002AEBDA /* PreviewDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewDetailViewController.swift; sourceTree = "<group>"; };
 		097C1ADCC0248082B4E2AECA /* Pods_PagLayerNameTestTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PagLayerNameTestTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		156B57A5B2C9B52F9A353E7B /* Pods-PagLayerNameTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagLayerNameTest.release.xcconfig"; path = "Target Support Files/Pods-PagLayerNameTest/Pods-PagLayerNameTest.release.xcconfig"; sourceTree = "<group>"; };
 		20FD7D3A4660CCC146611FFC /* Pods-PagLayerNameTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagLayerNameTest.debug.xcconfig"; path = "Target Support Files/Pods-PagLayerNameTest/Pods-PagLayerNameTest.debug.xcconfig"; sourceTree = "<group>"; };
@@ -134,6 +138,8 @@
 				0836ADAA291224AB002AEBDA /* ViewController.swift */,
 				0836ADDB29124B69002AEBDA /* NameTableViewCell.swift */,
 				0836ADE829124D8C002AEBDA /* PreviewViewController.swift */,
+				0836ADF2291280F9002AEBDA /* PreviewDetailViewController.swift */,
+				080DC3C52914FF0500F761BD /* EditTextPop.swift */,
 				0836ADDC29124B69002AEBDA /* NameTableViewCell.xib */,
 				0836ADAC291224AB002AEBDA /* Main.storyboard */,
 				0836ADAF291224AC002AEBDA /* Assets.xcassets */,
@@ -441,6 +447,8 @@
 			files = (
 				0836ADAB291224AB002AEBDA /* ViewController.swift in Sources */,
 				0836ADA7291224AB002AEBDA /* AppDelegate.swift in Sources */,
+				080DC3C62914FF0500F761BD /* EditTextPop.swift in Sources */,
+				0836ADF3291280F9002AEBDA /* PreviewDetailViewController.swift in Sources */,
 				0836ADDD29124B69002AEBDA /* NameTableViewCell.swift in Sources */,
 				0836ADEA29124D8C002AEBDA /* PreviewViewController.swift in Sources */,
 			);
@@ -548,7 +556,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -602,7 +610,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;

@@ -8,15 +8,37 @@
 import UIKit
 import libpag
 
+
+class LayerModel {
+    var type: Int
+    var name: String
+    var index: Int
+    var title: String? {
+        get {
+            return "[type: \(type)]" + " " + "[name: \(name)]"
+        }
+    }
+    
+    init(type: Int, name: String, index: Int) {
+        self.type = type
+        self.name = name
+        self.index = index
+    }
+}
+
 class PreviewViewController: UIViewController {
     
     @IBOutlet weak var titleLabel: UILabel!
     
     var pagView: PAGView?
     
+    var pagFile: PAGFile?
+    
     var file: String?
     
-    var list: [String] = []
+    var list: [LayerModel] = []
+    
+    var currentSelectModel: LayerModel?
     
     @IBOutlet weak var tableView: UITableView!
     override func viewDidLoad() {
@@ -32,10 +54,23 @@ class PreviewViewController: UIViewController {
         pagView?.layer.borderWidth = 1
         pagView?.layer.cornerRadius = 3
         
+        pagView?.isUserInteractionEnabled = true
+        let tapGes = UITapGestureRecognizer.init(target: self, action: #selector(previewDetailClickAction(_:)))
+        pagView?.addGestureRecognizer(tapGes)
+        
         self.tableView.register(UINib.init(nibName: "NameTableViewCell", bundle: Bundle.main), forCellReuseIdentifier: "DefaultId")
         
         self.previewFile(file)
         // Do any additional setup after loading the view.
+    }
+    
+    @objc func previewDetailClickAction(_ ges: UITapGestureRecognizer) {
+        let storyBoard = UIStoryboard.init(name: "Main", bundle: Bundle.main)
+        guard let vc = storyBoard.instantiateViewController(withIdentifier: "PreviewDetailViewController") as? PreviewDetailViewController else {
+            return
+        }
+        vc.filePath = self.file
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func previewFile(_ file: String?) {
@@ -43,7 +78,7 @@ class PreviewViewController: UIViewController {
         let pathList = file?.components(separatedBy: "/")
         self.titleLabel.text = pathList?.last ?? ""
         
-        let pagFile = PAGFile.load(file)
+        pagFile = PAGFile.load(file)
         pagView?.setComposition(pagFile)
         pagView?.play()
         
@@ -52,7 +87,9 @@ class PreviewViewController: UIViewController {
         }
         for i in 0..<count {
             let layer = pagFile?.getLayerAt(Int32(i))
-            list.append("[\(i)]" + " " + "[type: \(layer?.layerType().rawValue ?? 0)]" + " " + "[name: \(layer?.layerName() ?? "")]")
+            let layerType = layer?.layerType().rawValue ?? 0
+            let layerName = layer?.layerName() ?? ""
+            list.append(LayerModel.init(type: layerType, name: layerName, index: i))
         }
         self.tableView.reloadData()
     }
@@ -72,9 +109,112 @@ extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let reuseId = "DefaultId"
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseId) as? NameTableViewCell
-        cell?.title = list[indexPath.row]
+        cell?.title = "\([indexPath.row])" + " " + (list[indexPath.row].title ?? "")
         return cell!
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let model = list[indexPath.row]
+        var tag = ""
+        if model.type == 3 {
+            tag = "文字"
+        } else if model.type == 5 {
+            tag = "图片"
+        }
+        weak var weakSelf = self
+        let vc = UIAlertController.init(title: list[indexPath.row].title, message: nil, preferredStyle: UIAlertController.Style.alert)
+        vc.addAction(.init(title: "修改\(tag)图层", style: .default, handler: { _ in
+            weakSelf?.editLayer(indexPath: indexPath)
+        }))
+        vc.addAction(.init(title: "删除图层", style: .default, handler: { _ in
+            weakSelf?.deleteLayer(indexPath: indexPath)
+        }))
+        
+        vc.addAction(.init(title: "知道了", style: .cancel, handler: { _ in }))
+        self.present(vc, animated: true)
+        
+    }
     
+    func deleteLayer(indexPath: IndexPath) {
+        let model = list[indexPath.row]
+        if model.name.count > 0 {
+            let layer = pagFile?.getLayersByName(model.name).first
+            pagFile?.remove(layer)
+        } else {
+            let layer = pagFile?.getLayerAt(Int32(model.index))
+            pagFile?.remove(layer)
+        }
+        list.remove(at: indexPath.row)
+        pagView?.setComposition(pagFile)
+        tableView.reloadData()
+    }
+    
+    func editLayer(indexPath: IndexPath) {
+        let model = list[indexPath.row]
+        if model.type != 3 && model.type != 5 {
+            return
+        }
+        if model.type == 3 {
+            self.editTextLayer(model: model)
+        }
+        if model.type == 5 {
+            self.editImageLayer(model: model)
+        }
+    }
+    
+    func editTextLayer(model: LayerModel) {
+        var textLayer = pagFile?.getLayersByName(model.name).first as? PAGTextLayer
+        if textLayer != nil {
+            textLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGTextLayer
+        }
+        guard let layer = textLayer else {
+            return
+        }
+        EditTextPopPop.showPop(withDomain: "") { newString, _ in
+            layer.setText(newString)
+        }
+        
+    }
+    
+    func editImageLayer(model: LayerModel) {
+        self.currentSelectModel = model
+        let pickerVC = UIImagePickerController.init()
+        pickerVC.delegate = self
+        self.navigationController?.present(pickerVC, animated: true)
+    }
+    
+    func didSelectImage(_ image: UIImage) {
+        
+        guard let model = self.currentSelectModel else {
+            return
+        }
+        var imageLayer = pagFile?.getLayersByName(model.name).first as? PAGImageLayer
+        if imageLayer != nil {
+            imageLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGImageLayer
+        }
+        guard let layer = imageLayer else {
+            return
+        }
+        let pagImage = PAGImage.fromCGImage(image.cgImage)
+        layer.setImage(pagImage)
+        
+    }
+    
+}
+
+extension PreviewViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        picker.dismiss(animated: true)
+        guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
+            return
+        }
+        self.didSelectImage(image)
+    }
+
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
 }
