@@ -93,6 +93,110 @@ class PreviewViewController: UIViewController {
         }
         self.tableView.reloadData()
     }
+    
+    func deleteLayer(indexPath: IndexPath) {
+        let model = list[indexPath.row]
+        if model.name.count > 0 {
+            let layer = pagFile?.getLayersByName(model.name).first
+            pagFile?.remove(layer)
+        } else {
+            let layer = pagFile?.getLayerAt(Int32(model.index))
+            pagFile?.remove(layer)
+        }
+        list.remove(at: indexPath.row)
+        pagView?.setComposition(pagFile)
+        tableView.reloadData()
+    }
+    
+    func editLayer(indexPath: IndexPath) {
+        let model = list[indexPath.row]
+
+        if model.type == 3 {
+            self.editTextLayer(model: model)
+        }
+        if model.type == 5 {
+            self.editImageLayer(model: model)
+        }
+        if model.type == 6 {
+            self.editBMPLayer(model: model)
+        }
+    }
+    
+    func editTextLayer(model: LayerModel) {
+        if let textLayer = pagFile?.getLayersByName(model.name).first as? PAGTextLayer {
+            weak var weakLayer = textLayer
+            EditTextPopPop.showPop(withDomain: "") { newString, _ in
+                weakLayer?.setText(newString)
+            }
+            return
+        }
+        if let textLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGTextLayer {
+            weak var weakLayer = textLayer
+            EditTextPopPop.showPop(withDomain: "") { newString, _ in
+                weakLayer?.setText(newString)
+            }
+            return
+        }
+        if let bmpLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGLayer {
+            if bmpLayer.layerType() == PAGLayerType.preCompose {
+                weak var weakSelf = self
+                EditTextPopPop.showPop(withDomain: "") { newString, _ in
+                    let text = PAGText.init()
+                    text.text = newString
+                    weakSelf?.pagFile?.replaceText(Int32(model.index), data: text)
+                }
+                return
+            }
+        }
+        
+        
+    }
+    
+    func editImageLayer(model: LayerModel) {
+        self.currentSelectModel = model
+        let pickerVC = UIImagePickerController.init()
+        pickerVC.delegate = self
+        self.navigationController?.present(pickerVC, animated: true)
+    }
+    
+    func didSelectImage(_ image: UIImage) {
+        
+        guard let model = self.currentSelectModel else {
+            return
+        }
+        if let imageLayer = pagFile?.getLayersByName(model.name).first as? PAGImageLayer {
+            let pagImage = PAGImage.fromCGImage(image.cgImage)
+            imageLayer.setImage(pagImage)
+            return
+        }
+        if let imageLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGImageLayer {
+            let pagImage = PAGImage.fromCGImage(image.cgImage)
+            imageLayer.setImage(pagImage)
+            return
+        }
+        if let bmpLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGLayer {
+            if bmpLayer.layerType() == PAGLayerType.preCompose {
+                let pagImage = PAGImage.fromCGImage(image.cgImage)
+                self.pagFile?.replaceImage(Int32(model.index), data: pagImage)
+                return
+            }
+           
+        }
+    }
+    
+    func editBMPLayer(model: LayerModel) {
+        weak var weakSelf = self
+        let vc = UIAlertController.init(title: "特殊替换", message: "BMP图层具有不确定性，替换可能失败", preferredStyle: UIAlertController.Style.actionSheet)
+        vc.addAction(.init(title: "特殊替换图片", style: .default, handler: { _ in
+            weakSelf?.editImageLayer(model: model)
+        }))
+        vc.addAction(.init(title: "特殊替换文字(暂未启用)", style: .default, handler: { _ in
+//            weakSelf?.editImageLayer(model: model)
+            weakSelf?.editTextLayer(model: model)
+        }))
+        vc.addAction(.init(title: "取消", style: .cancel, handler: { _ in }))
+        self.present(vc, animated: true)
+    }
 
 }
 
@@ -135,71 +239,7 @@ extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
         self.present(vc, animated: true)
         
     }
-    
-    func deleteLayer(indexPath: IndexPath) {
-        let model = list[indexPath.row]
-        if model.name.count > 0 {
-            let layer = pagFile?.getLayersByName(model.name).first
-            pagFile?.remove(layer)
-        } else {
-            let layer = pagFile?.getLayerAt(Int32(model.index))
-            pagFile?.remove(layer)
-        }
-        list.remove(at: indexPath.row)
-        pagView?.setComposition(pagFile)
-        tableView.reloadData()
-    }
-    
-    func editLayer(indexPath: IndexPath) {
-        let model = list[indexPath.row]
-        if model.type != 3 && model.type != 5 {
-            return
-        }
-        if model.type == 3 {
-            self.editTextLayer(model: model)
-        }
-        if model.type == 5 {
-            self.editImageLayer(model: model)
-        }
-    }
-    
-    func editTextLayer(model: LayerModel) {
-        var textLayer = pagFile?.getLayersByName(model.name).first as? PAGTextLayer
-        if textLayer != nil {
-            textLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGTextLayer
-        }
-        guard let layer = textLayer else {
-            return
-        }
-        EditTextPopPop.showPop(withDomain: "") { newString, _ in
-            layer.setText(newString)
-        }
-        
-    }
-    
-    func editImageLayer(model: LayerModel) {
-        self.currentSelectModel = model
-        let pickerVC = UIImagePickerController.init()
-        pickerVC.delegate = self
-        self.navigationController?.present(pickerVC, animated: true)
-    }
-    
-    func didSelectImage(_ image: UIImage) {
-        
-        guard let model = self.currentSelectModel else {
-            return
-        }
-        var imageLayer = pagFile?.getLayersByName(model.name).first as? PAGImageLayer
-        if imageLayer != nil {
-            imageLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGImageLayer
-        }
-        guard let layer = imageLayer else {
-            return
-        }
-        let pagImage = PAGImage.fromCGImage(image.cgImage)
-        layer.setImage(pagImage)
-        
-    }
+
     
 }
 
