@@ -24,6 +24,8 @@
 		0836ADEA29124D8C002AEBDA /* PreviewViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0836ADE829124D8C002AEBDA /* PreviewViewController.swift */; };
 		0836ADF1291254D5002AEBDA /* pet_levelUpThan_animate in Resources */ = {isa = PBXBuildFile; fileRef = 0836ADF0291254D5002AEBDA /* pet_levelUpThan_animate */; };
 		0836ADF3291280F9002AEBDA /* PreviewDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0836ADF2291280F9002AEBDA /* PreviewDetailViewController.swift */; };
+		338825916D4CA9AB981E17E8 /* EditBackgroundColorCurrentColorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3388218B3194363DC23A7B63 /* EditBackgroundColorCurrentColorView.swift */; };
+		33882E5B4D1AF944D186A295 /* EditBackgroundColorPop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 33882CB40340816372F72E25 /* EditBackgroundColorPop.swift */; };
 		5698D4413ABE595C57561908 /* Pods_PagLayerNameTestTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 097C1ADCC0248082B4E2AECA /* Pods_PagLayerNameTestTests.framework */; };
 		5DCDC363708B4030DED7CDA1 /* Pods_PagLayerNameTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0214E25DD259D084B470A058 /* Pods_PagLayerNameTest.framework */; };
 		CB41B3F3CE03CEB4CC10F648 /* Pods_PagLayerNameTest_PagLayerNameTestUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A0EAFDDE557EF866D574E669 /* Pods_PagLayerNameTest_PagLayerNameTestUITests.framework */; };
@@ -73,6 +75,8 @@
 		097C1ADCC0248082B4E2AECA /* Pods_PagLayerNameTestTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PagLayerNameTestTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		156B57A5B2C9B52F9A353E7B /* Pods-PagLayerNameTest.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagLayerNameTest.release.xcconfig"; path = "Target Support Files/Pods-PagLayerNameTest/Pods-PagLayerNameTest.release.xcconfig"; sourceTree = "<group>"; };
 		20FD7D3A4660CCC146611FFC /* Pods-PagLayerNameTest.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagLayerNameTest.debug.xcconfig"; path = "Target Support Files/Pods-PagLayerNameTest/Pods-PagLayerNameTest.debug.xcconfig"; sourceTree = "<group>"; };
+		3388218B3194363DC23A7B63 /* EditBackgroundColorCurrentColorView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditBackgroundColorCurrentColorView.swift; sourceTree = "<group>"; };
+		33882CB40340816372F72E25 /* EditBackgroundColorPop.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditBackgroundColorPop.swift; sourceTree = "<group>"; };
 		491FE00F3B2E3406B23196C9 /* Pods-PagLayerNameTest-PagLayerNameTestUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagLayerNameTest-PagLayerNameTestUITests.debug.xcconfig"; path = "Target Support Files/Pods-PagLayerNameTest-PagLayerNameTestUITests/Pods-PagLayerNameTest-PagLayerNameTestUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		810BE83BC4585F92C03993A2 /* Pods-PagLayerNameTestTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-PagLayerNameTestTests.release.xcconfig"; path = "Target Support Files/Pods-PagLayerNameTestTests/Pods-PagLayerNameTestTests.release.xcconfig"; sourceTree = "<group>"; };
 		A0EAFDDE557EF866D574E669 /* Pods_PagLayerNameTest_PagLayerNameTestUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_PagLayerNameTest_PagLayerNameTestUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -146,6 +150,8 @@
 				0836ADDF29124D40002AEBDA /* Resource */,
 				0836ADB1291224AC002AEBDA /* LaunchScreen.storyboard */,
 				0836ADB4291224AC002AEBDA /* Info.plist */,
+				33882CB40340816372F72E25 /* EditBackgroundColorPop.swift */,
+				3388218B3194363DC23A7B63 /* EditBackgroundColorCurrentColorView.swift */,
 			);
 			path = PagLayerNameTest;
 			sourceTree = "<group>";
@@ -451,6 +457,8 @@
 				0836ADF3291280F9002AEBDA /* PreviewDetailViewController.swift in Sources */,
 				0836ADDD29124B69002AEBDA /* NameTableViewCell.swift in Sources */,
 				0836ADEA29124D8C002AEBDA /* PreviewViewController.swift in Sources */,
+				33882E5B4D1AF944D186A295 /* EditBackgroundColorPop.swift in Sources */,
+				338825916D4CA9AB981E17E8 /* EditBackgroundColorCurrentColorView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
