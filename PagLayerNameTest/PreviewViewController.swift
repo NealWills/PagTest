@@ -157,24 +157,24 @@ class PreviewViewController: UIViewController {
 }
 
 extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
-    
+
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return list.count
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let reuseId = "DefaultId"
         let cell = tableView.dequeueReusableCell(withIdentifier: reuseId) as? NameTableViewCell
         cell?.title = "\([indexPath.row])" + " " + (list[indexPath.row].title ?? "")
         return cell!
     }
-    
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
+
         let model = list[indexPath.row]
         var tag = ""
         if model.type == 3 {
@@ -190,12 +190,12 @@ extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
         vc.addAction(.init(title: "删除图层", style: .default, handler: { _ in
             weakSelf?.deleteLayer(indexPath: indexPath)
         }))
-        
+
         vc.addAction(.init(title: "知道了", style: .cancel, handler: { _ in }))
         self.present(vc, animated: true)
-        
+
     }
-    
+
     func deleteLayer(indexPath: IndexPath) {
         let model = list[indexPath.row]
         if model.name.count > 0 {
@@ -212,32 +212,49 @@ extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
 
     func editLayer(indexPath: IndexPath) {
         let model = list[indexPath.row]
-        if model.type != 3 && model.type != 5 {
-            return
-        }
         if model.type == 3 {
             self.editTextLayer(model: model)
+            return
         }
         if model.type == 5 {
             self.editImageLayer(model: model)
+            return
         }
-//        if model.type == 6 {
-//            self.editBMPLayer(model: model)
-//        }
+        if model.type == 6 {
+            self.editBMPLayer(model: model)
+            return
+        }
     }
 
     func editTextLayer(model: LayerModel) {
-        var textLayer = pagFile?.getLayersByName(model.name).first as? PAGTextLayer
-        if textLayer != nil {
-            textLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGTextLayer
-        }
-        guard let layer = textLayer else {
+
+        if let textLayer = pagFile?.getLayersByName(model.name).first as? PAGTextLayer {
+            weak var weakLayer = textLayer
+            EditTextPopPop.showPop(withDomain: "") { newString, _ in
+                weakLayer?.setText(newString)
+            }
+
             return
         }
-        EditTextPopPop.showPop(withDomain: "") { newString, _ in
-            layer.setText(newString)
+        if let textLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGTextLayer {
+            weak var weakLayer = textLayer
+            EditTextPopPop.showPop(withDomain: "") { newString, _ in
+                weakLayer?.setText(newString)
+            }
+            return
         }
-        
+
+        if let bmpLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGLayer {
+            if bmpLayer.layerType() == PAGLayerType.preCompose {
+                weak var weakSelf = self
+                EditTextPopPop.showPop(withDomain: "") { newString, _ in
+                    let text = PAGText.init()
+                    text.text = newString
+                    weakSelf?.pagFile?.replaceText(Int32(model.index), data: text)
+                }
+                return
+            }
+        }
     }
 
     func editImageLayer(model: LayerModel) {
@@ -247,28 +264,54 @@ extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
         self.navigationController?.present(pickerVC, animated: true)
     }
 
+    func editBMPLayer(model: LayerModel) {
+        weak var weakSelf = self
+        let vc = UIAlertController.init(title: "特殊替换", message: "BMP图层具有不确定性，替换可能失败", preferredStyle: UIAlertController.Style.actionSheet)
+        vc.addAction(.init(title: "特殊替换图片", style: .default, handler: { _ in
+            weakSelf?.editImageLayer(model: model)
+        }))
+        vc.addAction(.init(title: "特殊替换文字(暂未启用)", style: .default, handler: { _ in
+//            weakSelf?.editImageLayer(model: model)
+            weakSelf?.editTextLayer(model: model)
+        }))
+        vc.addAction(.init(title: "取消", style: .cancel, handler: { _ in }))
+        self.present(vc, animated: true)
+    }
+
+
     func didSelectImage(_ image: UIImage) {
 
         guard let model = self.currentSelectModel else {
             return
         }
-        var imageLayer = pagFile?.getLayersByName(model.name).first as? PAGImageLayer
-        if imageLayer != nil {
-            imageLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGImageLayer
-        }
-        guard let layer = imageLayer else {
+
+        if let imageLayer = pagFile?.getLayersByName(model.name).first as? PAGImageLayer {
+            let pagImage = PAGImage.fromCGImage(image.cgImage)
+            imageLayer.setImage(pagImage)
             return
         }
-        let pagImage = PAGImage.fromCGImage(image.cgImage)
-        layer.setImage(pagImage)
-        
+
+        if let imageLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGImageLayer {
+            let pagImage = PAGImage.fromCGImage(image.cgImage)
+            imageLayer.setImage(pagImage)
+            return
+        }
+
+        if let bmpLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGLayer {
+            if bmpLayer.layerType() == PAGLayerType.preCompose {
+                let pagImage = PAGImage.fromCGImage(image.cgImage)
+                self.pagFile?.replaceImage(Int32(model.index), data: pagImage)
+                return
+            }
+        }
+
     }
-    
+
 }
 
 extension PreviewViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
 
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true)
         guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
             return
