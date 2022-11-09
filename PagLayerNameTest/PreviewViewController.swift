@@ -154,6 +154,48 @@ class PreviewViewController: UIViewController {
         self.tableView.reloadData()
     }
 
+}
+
+extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
+    
+    func numberOfSections(in tableView: UITableView) -> Int {
+        return 1
+    }
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return list.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let reuseId = "DefaultId"
+        let cell = tableView.dequeueReusableCell(withIdentifier: reuseId) as? NameTableViewCell
+        cell?.title = "\([indexPath.row])" + " " + (list[indexPath.row].title ?? "")
+        return cell!
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let model = list[indexPath.row]
+        var tag = ""
+        if model.type == 3 {
+            tag = "文字"
+        } else if model.type == 5 {
+            tag = "图片"
+        }
+        weak var weakSelf = self
+        let vc = UIAlertController.init(title: list[indexPath.row].title, message: nil, preferredStyle: UIAlertController.Style.alert)
+        vc.addAction(.init(title: "修改\(tag)图层", style: .default, handler: { _ in
+            weakSelf?.editLayer(indexPath: indexPath)
+        }))
+        vc.addAction(.init(title: "删除图层", style: .default, handler: { _ in
+            weakSelf?.deleteLayer(indexPath: indexPath)
+        }))
+        
+        vc.addAction(.init(title: "知道了", style: .cancel, handler: { _ in }))
+        self.present(vc, animated: true)
+        
+    }
+    
     func deleteLayer(indexPath: IndexPath) {
         let model = list[indexPath.row]
         if model.name.count > 0 {
@@ -183,38 +225,17 @@ class PreviewViewController: UIViewController {
     }
 
     func editTextLayer(model: LayerModel) {
-        if let textLayer = pagFile?.getLayersByName(model.name).first as? PAGTextLayer {
-//            weak var weakLayer = textLayer
-            EditTextPopPop.showPop(withDomain: "") { newString, _ in
-//                DispatchQueue.main.async {
-                textLayer.setText(newString)
-//                }
-            }
+        var textLayer = pagFile?.getLayersByName(model.name).first as? PAGTextLayer
+        if textLayer != nil {
+            textLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGTextLayer
+        }
+        guard let layer = textLayer else {
             return
         }
-        if let textLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGTextLayer {
-//            weak var weakLayer = textLayer
-            EditTextPopPop.showPop(withDomain: "") { newString, _ in
-//                DispatchQueue.main.async {
-                textLayer.setText(newString)
-//                }
-            }
-            return
+        EditTextPopPop.showPop(withDomain: "") { newString, _ in
+            layer.setText(newString)
         }
-        if let bmpLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGLayer {
-            if bmpLayer.layerType() == PAGLayerType.preCompose {
-                weak var weakSelf = self
-                EditTextPopPop.showPop(withDomain: "") { newString, _ in
-                    let text = PAGText.init()
-                    text.text = newString
-                    DispatchQueue.main.async {
-                        weakSelf?.pagFile?.replaceText(Int32(model.index), data: text)
-                    }
-                }
-                return
-            }
-        }
-
+        
     }
 
     func editImageLayer(model: LayerModel) {
@@ -229,83 +250,18 @@ class PreviewViewController: UIViewController {
         guard let model = self.currentSelectModel else {
             return
         }
-        if let imageLayer = pagFile?.getLayersByName(model.name).first as? PAGImageLayer {
-            let pagImage = PAGImage.fromCGImage(image.cgImage)
-            imageLayer.setImage(pagImage)
+        var imageLayer = pagFile?.getLayersByName(model.name).first as? PAGImageLayer
+        if imageLayer != nil {
+            imageLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGImageLayer
+        }
+        guard let layer = imageLayer else {
             return
         }
-        if let imageLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGImageLayer {
-            let pagImage = PAGImage.fromCGImage(image.cgImage)
-            imageLayer.setImage(pagImage)
-            return
-        }
-        if let bmpLayer = pagFile?.getLayerAt(Int32(model.index)) as? PAGLayer {
-            if bmpLayer.layerType() == PAGLayerType.preCompose {
-                let pagImage = PAGImage.fromCGImage(image.cgImage)
-                self.pagFile?.replaceImage(Int32(model.index), data: pagImage)
-                return
-            }
-
-        }
+        let pagImage = PAGImage.fromCGImage(image.cgImage)
+        layer.setImage(pagImage)
+        
     }
-
-    func editBMPLayer(model: LayerModel) {
-        weak var weakSelf = self
-        let vc = UIAlertController.init(title: "特殊替换", message: "BMP图层具有不确定性，替换可能失败", preferredStyle: UIAlertController.Style.actionSheet)
-        vc.addAction(.init(title: "特殊替换图片", style: .default, handler: { _ in
-            weakSelf?.editImageLayer(model: model)
-        }))
-        vc.addAction(.init(title: "特殊替换文字(暂未启用)", style: .default, handler: { _ in
-//            weakSelf?.editImageLayer(model: model)
-            weakSelf?.editTextLayer(model: model)
-        }))
-        vc.addAction(.init(title: "取消", style: .cancel, handler: { _ in }))
-        self.present(vc, animated: true)
-    }
-
-}
-
-extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
-
-    func numberOfSections(in tableView: UITableView) -> Int {
-        return 1
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return list.count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let reuseId = "DefaultId"
-        let cell = tableView.dequeueReusableCell(withIdentifier: reuseId) as? NameTableViewCell
-        cell?.title = "\([indexPath.row])" + " " + (list[indexPath.row].title ?? "")
-        return cell!
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
-        let model = list[indexPath.row]
-        var tag = ""
-        if model.type == 3 {
-            tag = "文字"
-        } else if model.type == 5 {
-            tag = "图片"
-        }
-        weak var weakSelf = self
-        let vc = UIAlertController.init(title: list[indexPath.row].title, message: nil, preferredStyle: UIAlertController.Style.alert)
-        vc.addAction(.init(title: "修改\(tag)图层", style: .default, handler: { _ in
-            weakSelf?.editLayer(indexPath: indexPath)
-        }))
-        vc.addAction(.init(title: "删除图层", style: .default, handler: { _ in
-            weakSelf?.deleteLayer(indexPath: indexPath)
-        }))
-
-        vc.addAction(.init(title: "知道了", style: .cancel, handler: { _ in }))
-        self.present(vc, animated: true)
-
-    }
-
-
+    
 }
 
 extension PreviewViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
