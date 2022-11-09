@@ -212,16 +212,18 @@ extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
 
     func editLayer(indexPath: IndexPath) {
         let model = list[indexPath.row]
-
+        if model.type != 3 && model.type != 5 {
+            return
+        }
         if model.type == 3 {
             self.editTextLayer(model: model)
         }
         if model.type == 5 {
             self.editImageLayer(model: model)
         }
-        if model.type == 6 {
-            self.editBMPLayer(model: model)
-        }
+//        if model.type == 6 {
+//            self.editBMPLayer(model: model)
+//        }
     }
 
     func editTextLayer(model: LayerModel) {
@@ -266,7 +268,7 @@ extension PreviewViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension PreviewViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
 
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         picker.dismiss(animated: true)
         guard let image = info[UIImagePickerController.InfoKey.originalImage] as? UIImage else {
             return
